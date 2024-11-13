@@ -8,7 +8,7 @@ describe("InputText 컴포넌트 테스트", () => {
 		// 1. 렌더
 		render(
 			<BookStoreThemeProvider>
-				<InputText placeholder="여기에 입력"/>
+				<InputText inputType="text" placeholder="여기에 입력"/>
 			</BookStoreThemeProvider>
 		)
 
@@ -21,7 +21,7 @@ describe("InputText 컴포넌트 테스트", () => {
 
 		render(
 			<BookStoreThemeProvider>
-				<InputText placeholder="여기에 입력" ref={ref}/>
+				<InputText inputType='text' placeholder="여기에 입력" ref={ref}/>
 			</BookStoreThemeProvider>
 		)
 

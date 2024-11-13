@@ -2,8 +2,13 @@ import { styled } from "styled-components";
 import ThemeSwicher from "../header/ThemeSwicher";
 import logo from "../../assets/images/logo.jpg";
 import { FaSignInAlt, FaRegUser } from "react-icons/fa"
+import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Category } from "../../models/category.models";
+import { fetchCategory } from "../../api/category.api";
+import { useCategory } from "../../hooks/useCategory";
 
-const CATEGORY = [
+const category = [
 	{
 		id: null,
 		name: "전체",
@@ -23,19 +28,25 @@ const CATEGORY = [
 ];
 
 function Header() {
+
+	// const { category } = useCategory();
+
 	return (
 		<HeaderStyle>
 			<h1 className="logo">
-				<img src={logo} alt="book store"/>
+				<Link to="/">
+					<img src={logo} alt="book store"/>
+				</Link>
 			</h1>
 			<nav className="category">
 				<ul>
 					{
-						CATEGORY.map((item) => (
+						category.map((item) => (
 							<li key={item.id}>
-								<a href={item.id === null ? `/books` : `/books?category_id=${item.id}`}>
+								{/* 리액트 라우터 사용시 a 태그가 아닌 Link 컴포넌트 사용 */}
+								<Link to={item.id === null ? `/books` : `/books?category_id=${item.id}`}>
 									{item.name}
-								</a>
+								</Link>
 							</li>
 						))
 					}
@@ -44,14 +55,14 @@ function Header() {
 			<nav className="auth">
 				<ul>
 					<li>
-						<a href="/login">
+						<Link to="/login">
 							<FaSignInAlt />로그인
-						</a>
+						</Link>
 					</li>
 					<li>
-						<a href="/join">
+						<Link to="/signup">
 							<FaRegUser />회원가입
-						</a>
+						</Link>
 					</li>
 				</ul>
 			</nav>
