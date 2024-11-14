@@ -7,6 +7,8 @@ import { useEffect, useState } from "react";
 import { Category } from "../../models/category.models";
 import { fetchCategory } from "../../api/category.api";
 import { useCategory } from "../../hooks/useCategory";
+import { useAuthstore } from "../../store/authStore";
+import Button from "./Button";
 
 const category = [
 	{
@@ -30,6 +32,7 @@ const category = [
 function Header() {
 
 	// const { category } = useCategory();
+	const { isLoggedIn, storeLogin, storeLogout } = useAuthstore();
 
 	return (
 		<HeaderStyle>
@@ -53,18 +56,32 @@ function Header() {
 				</ul>
 			</nav>
 			<nav className="auth">
-				<ul>
-					<li>
-						<Link to="/login">
-							<FaSignInAlt />로그인
-						</Link>
-					</li>
-					<li>
-						<Link to="/signup">
-							<FaRegUser />회원가입
-						</Link>
-					</li>
-				</ul>
+				{
+					isLoggedIn && (
+						<ul>
+							<li><Link to="/cart">장바구니</Link></li>
+							<li><Link to="/orderlist">주문 내역</Link></li>
+							<li><button onClick={storeLogout}>로그아웃</button></li>
+						</ul>
+					)
+				}
+				{
+					!isLoggedIn && (
+						<ul>
+							<li>
+								<Link to="/login">
+									<FaSignInAlt />로그인
+								</Link>
+							</li>
+							<li>
+								<Link to="/signup">
+									<FaRegUser />회원가입
+								</Link>
+							</li>
+						</ul>						
+					)
+				}
+
 			</nav>
 		</HeaderStyle>
 	);
@@ -93,15 +110,16 @@ const HeaderStyle = styled.header`
 		gap: 32px;
 
 			li {
-				a {
+				a, button {
 					font-size: 1.5rem;
 					font-weight: 600;
 					text-decoration: none;
-					color: ${({ theme }) => theme.color.text};
-
-					&:hover {
-						color: ${({ theme }) => theme.color.primary};
-					}
+					display: flex;
+					align-items: center;
+					line-height: 1;
+					background: none;
+					border: 0;
+					cursor: pointer;
 				}
 			}
 		}
