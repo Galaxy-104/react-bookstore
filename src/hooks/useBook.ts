@@ -1,37 +1,66 @@
-import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom"
-import { Book } from "../models/book.model";
-import { Pagination } from "../models/pagination.model";
-import { fetchBooks } from "../api/books.api";
-import { QUERYSTRING } from "../constants/querystring";
-import { LIMIT } from "../constants/pagination";
+import { useEffect, useState } from "react"
+import { BookDetail } from "../models/book.model"
+import { fetchBook, likeBook, unlikeBook } from "../api/books.api";
+import { useAuthstore } from "../store/authStore";
+import { useAlert } from "./useAlert";
+import { addCart } from "../api/carts.api";
 
-export const useBooks = () => {
-	const location = useLocation();
+export const useBook = (bookId: string | undefined) => {
+	const [ book, setBook ] = useState<BookDetail | null>(null);
+	const { isLoggedIn } = useAuthstore();
+	const showAlert = useAlert();
+	const [ cartAdded, setCartAdded ] = useState<boolean>(false);
 
-	const [ books, setBooks ] = useState<Book[]>([]);
-	const [ pagination, setPagination ] = useState<Pagination>
-	({
-		totalCount: 0,
-		currentPage: 1,
-	})
-	const [ isEmpty, setIsEmpty ] = useState(true);
+	const likeToggle = () => {
+
+		// 권한 확인
+		if (!isLoggedIn) {
+			showAlert("로그인이 필요합니다.");
+			return ;
+		}
+
+		if (!book) return;
+
+		if (book.liked) {
+			unlikeBook(book.id).then(() => {
+				setBook({
+					...book,
+					liked: false,
+					likes: book.likes - 1,
+				})
+			})
+		} else {
+			likeBook(book.id).then(() => {
+				setBook({
+					...book,
+					liked: true,
+					likes: book.likes + 1,
+				});
+			});
+		}
+	};
+
+	const addToCart = (quantity: number) => {
+		if (!book) return;
+
+		addCart({
+			book_id: book.id,
+			quantity: quantity,
+		}).then(() => {
+			setCartAdded(true);
+			setTimeout(() => {
+				setCartAdded(false);
+			}, 3000);
+		});
+	};
 
 	useEffect(() => {
-		const params = new URLSearchParams(location.search);
+		if(!bookId) return;
 
-		fetchBooks({
-			category_id: params.get(QUERYSTRING.CATEGORY_ID) ? Number(params.get(QUERYSTRING.CATEGORY_ID)) : undefined,
-			news: params.get(QUERYSTRING.NEWS) ? true : undefined,
-			currentPage: params.get(QUERYSTRING.PAGE) ? Number(params.get(QUERYSTRING.PAGE)) : 1,
-			limit: LIMIT,
-		}).then(({ books, pagination }) => {
-			setBooks(books);
-			setPagination(pagination);
-			setIsEmpty(books.length === 0);
-		})
-	}, [location.search]);
+		fetchBook(bookId).then((book) => {
+			setBook(book);
+		});
+	}, [bookId]);
 
-	return { books, pagination, isEmpty };
-
-};
+	return { book, likeToggle, cartAdded, addToCart };
+}

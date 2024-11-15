@@ -5,7 +5,7 @@ import BooksList from '../components/books/BooksList';
 import BooksEmpty from '../components/books/BooksEmpty';
 import Pagination from '../components/books/Pagination';
 import BooksViewSwitcher from '../components/books/BooksViewSwicher';
-import { useBooks } from '../hooks/useBook';
+import { useBooks } from '../hooks/useBooks';
 
 function Books() {
 	const { books, pagination, isEmpty } = useBooks();
