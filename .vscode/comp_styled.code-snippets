@@ -17,7 +17,7 @@
 	// }
 
 	"react-function-component-with-styled": {
-		"scope": "typescript",
+		"scope": "typescriptreact, typescript",
 		"prefix": "comp_styled",
 		"body": [
 			"import { styled } from 'styled-components';",
